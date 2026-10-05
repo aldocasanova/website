@@ -1,0 +1,64 @@
+---
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import Layout from '../layouts/Layout.astro';
+import { profile, projects } from '../config';
+const hasPhoto = existsSync(resolve('public', `.${profile.image}`));
+---
+<Layout page="profile" title="Profile">
+  <div class="profile-intro">
+    <div>
+      <h1>{profile.name}</h1>
+      <p class="profile-role">{profile.role}</p>
+      <p class="location">{profile.location}</p>
+    </div>
+    {hasPhoto && <a class="photo-link profile-photo-link" href={profile.image} data-photo data-astro-reload aria-label="Enlarge Aldo Casanova’s illustrated avatar"><img class="profile-photo" src={profile.image} alt="Aldo Casanova’s illustrated avatar" width="128" height="128" /></a>}
+  </div>
+  <section class="profile-section" aria-labelledby="about">
+    <h2 id="about">About</h2>
+    <p>I am a Computer Science Engineering student based in Sucre, Bolivia. My work spans applied machine learning and web development, with projects in multi-agent traffic control and e-commerce.</p>
+    <p>I am interested in how software can address practical problems, from evaluating decisions in a simulated city to building tools for everyday business operations.</p>
+  </section>
+  <section class="profile-section" aria-labelledby="work">
+    <h2 id="work">Selected work</h2>
+    <div class="project-list">
+      {projects.map((project, index) => (
+        <article class="project" aria-labelledby={project.id}>
+          <p class="project-category"><span aria-hidden="true">{String(index + 1).padStart(2, '0')} / </span>{project.category}</p>
+          <h3 id={project.id}>{project.name}</h3>
+          <p>{project.summary}</p>
+          <ul class="project-technologies" aria-label={`${project.name} technologies`}>
+            {project.technologies.map((technology) => <li>{technology}</li>)}
+          </ul>
+          <details class="project-disclosure">
+            <summary><span class="disclosure-marker" aria-hidden="true"></span>Project details<span class="sr-only">: {project.name}</span></summary>
+            <div class="project-details-content">
+              <p>{project.description}</p>
+              <p>{project.details}</p>
+              {project.url && <a class="inverse-link" href={project.url}>View project</a>}
+            </div>
+          </details>
+        </article>
+      ))}
+    </div>
+  </section>
+  <section class="profile-section" aria-labelledby="technical-focus">
+    <h2 id="technical-focus">Technical focus</h2>
+    <dl class="technical-focus">
+      <div><dt>Machine learning</dt><dd>Python, PyTorch, reinforcement learning, and simulation with SUMO.</dd></div>
+      <div><dt>Web development</dt><dd>TypeScript, Vue, Nuxt, Express, and static sites with Astro.</dd></div>
+      <div><dt>Data &amp; tools</dt><dd>PostgreSQL, Prisma, Git, and Linux.</dd></div>
+    </dl>
+  </section>
+  <section class="profile-section" aria-labelledby="elsewhere">
+    <h2 id="elsewhere">Elsewhere</h2>
+    <ul class="social-links">
+      {(['github', 'linkedin'] as const).map((key) => (
+        <li>
+          {profile[key] ? <a class="inverse-link" href={profile[key]}>{key === 'github' ? 'GitHub' : 'LinkedIn'}</a>
+            : <><span>{key === 'github' ? 'GitHub' : 'LinkedIn'}</span><span class="pending-link">not added yet</span></>}
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>

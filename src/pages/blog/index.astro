@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPosts, dateLabel, postUrl } from '../../lib/posts';
+const posts = await getPosts();
+---
+<Layout page="blog" title="Blog" description="Notes by Aldo Casanova.">
+  <h1>Notes</h1>
+  <div class="notes-list">
+    {posts.map((post) => (
+      <a class="note-link" href={postUrl(post.id)}>
+        <time datetime={post.data.date.toISOString().slice(0, 10)}>{dateLabel(post.data.date)}</time>
+        <span class="note-file"><span class="note-title">{post.id}.md</span><span class="note-description">{post.data.title}</span></span>
+        <span class="note-tag">tag: {post.data.tag}</span>
+      </a>
+    ))}
+    {posts.length === 0 && <p>No notes yet.</p>}
+  </div>
+</Layout>

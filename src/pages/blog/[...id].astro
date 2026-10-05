@@ -1,0 +1,23 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { getPosts, dateLabel, postUrl } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  return (await getPosts()).map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+interface Props { post: CollectionEntry<'blog'> }
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<Layout page="blog" title={post.data.title} description={`${post.data.title} — a note by Aldo Casanova.`}>
+  <div id="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><span></span></div>
+  <article data-reading-content>
+    <header class="post-header">
+      <h1>{post.data.title}</h1>
+      <p class="post-meta"><span>date: <time datetime={post.data.date.toISOString().slice(0, 10)}>{dateLabel(post.data.date)}</time></span><span>tag: {post.data.tag}</span></p>
+    </header>
+    <div class="prose"><Content /></div>
+    <footer class="post-footer"><a href="/blog/">All notes</a><a href={postUrl(post.id) + '#content'}>Back to top</a></footer>
+  </article>
+</Layout>

@@ -1,0 +1,43 @@
+---
+import Navigation from '../components/Navigation.astro';
+import AsciiVisitors from '../components/AsciiVisitors.astro';
+import RouteTransition from '../components/RouteTransition.astro';
+import PhotoViewer from '../components/PhotoViewer.astro';
+import CommandPalette from '../components/CommandPalette.astro';
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  page: 'home' | 'profile' | 'blog' | null;
+  description?: string;
+}
+const { title, page, description = 'Aldo Casanova. Computer Science Engineering student. Notes and selected work.' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
+    <title>{title ? `${title} / aldocasanova` : 'aldocasanova'}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <ClientRouter fallback="swap" />
+  </head>
+  <body class:list={[page === 'home' ? 'home-page' : 'inner-page']}>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="site-shell">
+      <header class="site-header"><Navigation active={page} /></header>
+      <main id="content" tabindex="-1" data-ascii-avoid><slot /></main>
+    </div>
+    <AsciiVisitors />
+    <RouteTransition />
+    <PhotoViewer />
+    <CommandPalette />
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

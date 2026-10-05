@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout page="home" description="Aldo Casanova. Sucre, Bolivia.">
+  <div class="home-content">
+    <a class="photo-link city-photo-link" href="/img/homeimage.JPG" data-photo data-astro-reload aria-label="Enlarge the photograph of Sucre">
+      <img class="city-photo" src="/img/homeimage.JPG" alt="The streets and church towers of Sucre at dusk." width="2048" height="1536" fetchpriority="high" />
+    </a>
+    <p class="city-clock">
+      <span>Time in Sucre</span>
+      <time id="sucre-time" aria-label="Current time in Sucre">--:--:--</time>
+      <span>BOT</span>
+    </p>
+    <noscript><p class="no-script-clock">Sucre is UTC−04:00. Enable JavaScript for the live clock.</p></noscript>
+  </div>
+</Layout>

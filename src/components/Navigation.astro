@@ -1,0 +1,13 @@
+---
+interface Props { active: 'home' | 'profile' | 'blog' | null }
+const { active } = Astro.props;
+const pages = [['home', '/'], ['profile', '/profile/'], ['blog', '/blog/']] as const;
+---
+<nav aria-label="Main navigation" data-ascii-avoid>
+  {pages.map(([label, href], index) => (
+    <>
+      {index > 0 && <span class="nav-divider" aria-hidden="true">/</span>}
+      <a href={href} aria-current={active === label ? 'page' : undefined}>{label}</a>
+    </>
+  ))}
+</nav>

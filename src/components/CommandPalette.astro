@@ -1,0 +1,11 @@
+<dialog id="command-palette" aria-labelledby="command-title">
+  <div class="command-toolbar">
+    <h2 id="command-title">~/commands</h2>
+    <form method="dialog"><button type="submit" aria-label="Close command palette">[×]</button></form>
+  </div>
+  <label for="command-input" class="sr-only">Type a command</label>
+  <div class="command-prompt"><span aria-hidden="true">$</span><input id="command-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="command-results" aria-describedby="command-help" autocomplete="off" spellcheck="false" placeholder="Type a command…" autofocus /></div>
+  <div id="command-results" role="listbox" aria-label="Available commands"></div>
+  <p id="command-status" role="status"></p>
+  <p id="command-help">↑ ↓ select · enter run · esc close</p>
+</dialog>
