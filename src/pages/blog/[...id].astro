@@ -1,6 +1,7 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import PageEnd from '../../components/PageEnd.astro';
 import { getPosts, dateLabel, postUrl } from '../../lib/posts';
 
 export async function getStaticPaths() {
@@ -9,15 +10,26 @@ export async function getStaticPaths() {
 interface Props { post: CollectionEntry<'blog'> }
 const { post } = Astro.props;
 const { Content } = await render(post);
+const posts = await getPosts();
+const index = posts.findIndex((entry) => entry.id === post.id);
+const newer = posts[index - 1];
+const older = posts[index + 1];
+const onward = [
+  ...(older ? [{ href: postUrl(older.id), label: 'Older note', title: older.data.title }] : []),
+  ...(newer ? [{ href: postUrl(newer.id), label: 'Newer note', title: newer.data.title }] : []),
+];
+if (!onward.length) onward.push({ href: '/profile/#work', label: 'Explore the portfolio', title: 'Selected work' });
 ---
-<Layout page="blog" title={post.data.title} description={`${post.data.title} — a note by Aldo Casanova.`}>
+<Layout page="blog" title={post.data.title} description={post.data.description ?? `${post.data.title} — a note by Aldo Casanova.`}>
   <div id="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><span></span></div>
   <article data-reading-content>
     <header class="post-header">
+      <a class="back-link" href="/blog/">← All notes</a>
       <h1>{post.data.title}</h1>
       <p class="post-meta"><span>date: <time datetime={post.data.date.toISOString().slice(0, 10)}>{dateLabel(post.data.date)}</time></span><span>tag: {post.data.tag}</span></p>
     </header>
     <div class="prose"><Content /></div>
-    <footer class="post-footer"><a href="/blog/">All notes</a><a href={postUrl(post.id) + '#content'}>Back to top</a></footer>
+
   </article>
+  <PageEnd back={{ href: '/blog/', label: '← All notes' }} links={onward} />
 </Layout>

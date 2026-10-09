@@ -1,10 +1,11 @@
+import { motionTiming } from './motion-timing';
 import { motionState, onMotionChange } from './motion';
 
 export function startEnhancements() {
   const controller = new AbortController();
   const { signal } = controller;
   const effects = new Set<Animation>();
-  const play = (element: Element, frames: Keyframe[], duration = 150) => {
+  const play = (element: Element, frames: Keyframe[], duration = motionTiming.detail) => {
     if (!motionState().enabled) return;
     const animation = element.animate(frames, { duration, easing: 'ease-out' });
     effects.add(animation);
@@ -39,12 +40,14 @@ export function startEnhancements() {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[data-photo]') : null;
       if (!link || typeof dialog.showModal !== 'function') return;
+      const target = new URL(link.href);
+      if (target.origin !== location.origin || !target.pathname.startsWith('/img/')) return;
       event.preventDefault();
       trigger = link;
       const source = link.querySelector('img');
       preview.src = link.href;
       preview.alt = source?.alt || 'Photograph';
-      caption.textContent = source?.alt || '';
+      caption.textContent = link.closest('figure')?.querySelector('figcaption')?.textContent || source?.alt || '';
       document.documentElement.dataset.photoOpen = 'true';
       document.dispatchEvent(new Event('site:photo-open'));
       dialog.showModal();
@@ -56,6 +59,7 @@ export function startEnhancements() {
       if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
     }, { signal });
     dialog.addEventListener('close', () => {
+      if (dialog.open) return;
       stopEffects();
       unlock();
       if (trigger?.isConnected) trigger.focus({ preventScroll: true });
@@ -65,7 +69,7 @@ export function startEnhancements() {
   document.querySelectorAll<HTMLDetailsElement>('.project-disclosure').forEach((details) => {
     details.addEventListener('toggle', () => {
       const content = details.querySelector('.project-details-content');
-      if (details.open && content) play(content, [{ opacity: 0, transform: 'translateY(-4px)' }, { opacity: 1, transform: 'translateY(0)' }], 160);
+      if (details.open && content) play(content, [{ opacity: 0, transform: 'translateY(-4px)' }, { opacity: 1, transform: 'translateY(0)' }], motionTiming.detail);
       document.dispatchEvent(new Event('site:layout-change'));
     }, { signal });
   });

@@ -20,6 +20,8 @@ export const projects = [
     details: 'The workflow includes a multi-agent environment, parallel training, checkpoint selection, and evaluation on held-out scenarios. Experiments use synthetic traffic demand in simulation.',
     technologies: ['Python', 'PyTorch', 'SUMO', 'PettingZoo', 'MAPPO'],
     url: '',
+    // Add a local /img/... path, descriptive alt text, and an optional caption.
+    image: { src: '', alt: '', caption: '' },
   },
   {
     id: 'capital-pets',
@@ -30,5 +32,7 @@ export const projects = [
     details: 'A Nuxt and Vue frontend connects to an Express API written in TypeScript. PostgreSQL and Prisma handle product and sales data, with Cloudinary for product images.',
     technologies: ['Nuxt', 'Vue', 'TypeScript', 'Express', 'PostgreSQL', 'Prisma'],
     url: '',
+    // Add a local /img/... path, descriptive alt text, and an optional caption.
+    image: { src: '', alt: '', caption: '' },
   },
 ];

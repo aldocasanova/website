@@ -19,3 +19,18 @@ pnpm-debug.log*
 # Operating system metadata
 .DS_Store
 Thumbs.db
+
+# Local tools, reports and private key material
+.codex/
+.agents/
+coverage/
+playwright-report/
+test-results/
+*.pem
+*.key
+*.p12
+*.pfx
+.npmrc
+
+# Local content guide and unpublished drafts
+/.local-guide/

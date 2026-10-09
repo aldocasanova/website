@@ -1,0 +1,22 @@
+---
+import { profile } from '../config';
+import Signature from './Signature.astro';
+interface Link { href: string; label: string; title: string }
+interface Props { links: Link[]; back: { href: string; label: string } }
+const { links, back } = Astro.props;
+const contacts = [
+  { href: profile.github, label: 'GitHub' },
+  { href: profile.linkedin, label: 'LinkedIn' },
+].filter((link) => link.href);
+---
+<footer class="page-end">
+  {links.length > 0 && <nav class="onward-links" aria-label="Continue exploring">
+    {links.map((link) => <a href={link.href}><span class="onward-label">{link.label}</span><span class="onward-title">{link.title}<span aria-hidden="true"> →</span></span></a>)}
+  </nav>}
+  <div class="page-end-base">
+    <a href={back.href}>{back.label}</a>
+    <a href="#content">Back to top ↑</a>
+    <Signature />
+  </div>
+  {contacts.length > 0 && <nav class="contact-links" aria-label="Find me online">{contacts.map((link) => <a href={link.href}>{link.label} ↗</a>)}</nav>}
+</footer>

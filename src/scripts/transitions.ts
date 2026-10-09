@@ -1,4 +1,5 @@
 import type { TransitionBeforePreparationEvent, TransitionBeforeSwapEvent } from 'astro:transitions/client';
+import { motionTiming } from './motion-timing';
 import { motionState, onMotionChange } from './motion';
 import { createSignalRenderer } from './signal-renderer';
 
@@ -37,7 +38,7 @@ export function initTransitions() {
     event.signal.addEventListener('abort', () => { if (generation === current) clear(); }, { once: true });
     event.loader = async () => {
       try {
-        await Promise.all([originalLoader(), activeRenderer.play(0, 1, 220)]);
+        await Promise.all([originalLoader(), activeRenderer.play(0, 1, motionTiming.cover)]);
         if (generation === current && (event.signal.aborted || event.defaultPrevented)) clear();
       } catch (error) {
         if (generation === current) clear();
@@ -57,7 +58,7 @@ export function initTransitions() {
     const current = generation;
     if (!renderer || !motionState().enabled || document.hidden) { clear(); return; }
     document.documentElement.dataset.routeTransition = 'reveal';
-    void renderer.play(1, 0, 300).then(() => { if (generation === current) clear(); });
+    void renderer.play(1, 0, motionTiming.reveal).then(() => { if (generation === current) clear(); });
   });
   onMotionChange(() => { if (!motionState().enabled) clear(); });
   document.addEventListener('keydown', (event) => { if (event.key === 'Escape') clear(); });

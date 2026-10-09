@@ -1,18 +1,35 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import PageEnd from '../../components/PageEnd.astro';
 import { getPosts, dateLabel, postUrl } from '../../lib/posts';
 const posts = await getPosts();
+const featured = posts.find((post) => post.data.featured) ?? posts[0];
+const archive = posts.filter((post) => post.id !== featured?.id);
 ---
 <Layout page="blog" title="Blog" description="Notes by Aldo Casanova.">
-  <h1>Notes</h1>
-  <div class="notes-list">
-    {posts.map((post) => (
-      <a class="note-link" href={postUrl(post.id)}>
-        <time datetime={post.data.date.toISOString().slice(0, 10)}>{dateLabel(post.data.date)}</time>
-        <span class="note-file"><span class="note-title">{post.id}.md</span><span class="note-description">{post.data.title}</span></span>
-        <span class="note-tag">tag: {post.data.tag}</span>
+  <header class="notebook-header"><h1>Notes</h1><p>Observations, experiments, and things to return to.</p></header>
+  {featured && <section class="featured-note" aria-labelledby="featured-heading">
+    <h2 class="archive-heading" id="featured-heading">{featured.data.featured ? 'Selected note' : 'Latest note'}</h2>
+    <div class="notes-list">
+      <a class="note-link" href={postUrl(featured.id)}>
+        <time datetime={featured.data.date.toISOString().slice(0, 10)}>{dateLabel(featured.data.date)}</time>
+        <span class="note-file"><span class="note-title">{featured.data.title}</span><span class="note-description">{featured.id}.md</span></span>
+        <span class="note-tag">{featured.data.tag}</span>
       </a>
-    ))}
-    {posts.length === 0 && <p>No notes yet.</p>}
-  </div>
+    </div>
+  </section>}
+  {archive.length > 0 && <section aria-labelledby="archive-title">
+    <h2 class="archive-heading" id="archive-title">More notes <span>{String(archive.length).padStart(2, '0')}</span></h2>
+    <div class="notes-list">
+      {archive.map((post) => (
+        <a class="note-link" href={postUrl(post.id)}>
+          <time datetime={post.data.date.toISOString().slice(0, 10)}>{dateLabel(post.data.date)}</time>
+          <span class="note-file"><span class="note-title">{post.data.title}</span><span class="note-description">{post.id}.md</span></span>
+          <span class="note-tag">{post.data.tag}</span>
+        </a>
+      ))}
+    </div>
+  </section>}
+  {posts.length === 0 && <p>No notes yet.</p>}
+  <PageEnd back={{ href: '/', label: '← Home' }} links={[{ href: '/profile/#work', label: 'Beyond the notebook', title: 'Explore selected work' }]} />
 </Layout>

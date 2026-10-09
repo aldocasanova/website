@@ -6,6 +6,7 @@ import PhotoViewer from '../components/PhotoViewer.astro';
 import CommandPalette from '../components/CommandPalette.astro';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
+import { siteOrigin, isPreview } from '../../config/site.mjs';
 
 interface Props {
   title?: string;
@@ -13,6 +14,9 @@ interface Props {
   description?: string;
 }
 const { title, page, description = 'Aldo Casanova. Computer Science Engineering student. Notes and selected work.' } = Astro.props;
+const pageTitle = title ? `${title} / aldocasanova` : 'aldocasanova';
+const canonical = siteOrigin ? new URL(Astro.url.pathname, siteOrigin).href : undefined;
+const shareImage = siteOrigin ? new URL('/share.png', siteOrigin).href : undefined;
 ---
 <!doctype html>
 <html lang="en">
@@ -22,7 +26,18 @@ const { title, page, description = 'Aldo Casanova. Computer Science Engineering 
     <meta name="description" content={description} />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#000000" />
-    <title>{title ? `${title} / aldocasanova` : 'aldocasanova'}</title>
+    <title>{pageTitle}</title>
+    <meta name="author" content="Aldo Casanova" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    {(page === null || isPreview) && <meta name="robots" content="noindex, follow" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {shareImage && <><meta property="og:image" content={shareImage} /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:image:alt" content="Aldo Casanova — selected work and notes, in a monochrome terminal composition." /></>}
+    <meta name="twitter:card" content={shareImage ? 'summary_large_image' : 'summary'} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <ClientRouter fallback="swap" />
   </head>

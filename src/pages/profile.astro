@@ -1,9 +1,14 @@
 ---
-import { existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import { profile, projects } from '../config';
-const hasPhoto = existsSync(resolve('public', `.${profile.image}`));
+import ProjectImage from '../components/ProjectImage.astro';
+import PageEnd from '../components/PageEnd.astro';
+import { getPosts, postUrl } from '../lib/posts';
+const latest = (await getPosts())[0];
+const portraits = import.meta.glob<{ default: ImageMetadata }>('../../public/img/*.{jpg,jpeg,JPG,png,webp}', { eager: true });
+const avatar = portraits[`../../public${profile.image}`]?.default;
 ---
 <Layout page="profile" title="Profile">
   <div class="profile-intro">
@@ -12,7 +17,7 @@ const hasPhoto = existsSync(resolve('public', `.${profile.image}`));
       <p class="profile-role">{profile.role}</p>
       <p class="location">{profile.location}</p>
     </div>
-    {hasPhoto && <a class="photo-link profile-photo-link" href={profile.image} data-photo data-astro-reload aria-label="Enlarge Aldo Casanova’s illustrated avatar"><img class="profile-photo" src={profile.image} alt="Aldo Casanova’s illustrated avatar" width="128" height="128" /></a>}
+    {avatar && <a class="photo-link profile-photo-link" href={profile.image} data-photo data-astro-reload aria-label="Enlarge Aldo Casanova’s illustrated avatar"><Image class="profile-photo" src={avatar} alt="Aldo Casanova’s illustrated avatar" width={128} height={128} widths={[128, 256]} sizes="128px" format="webp" /></a>}
   </div>
   <section class="profile-section" aria-labelledby="about">
     <h2 id="about">About</h2>
@@ -25,8 +30,10 @@ const hasPhoto = existsSync(resolve('public', `.${profile.image}`));
       {projects.map((project, index) => (
         <article class="project" aria-labelledby={project.id}>
           <p class="project-category"><span aria-hidden="true">{String(index + 1).padStart(2, '0')} / </span>{project.category}</p>
-          <h3 id={project.id}>{project.name}</h3>
+          <h3 id={project.id}><a href={`/projects/${project.id}/`}>{project.name}</a></h3>
           <p>{project.summary}</p>
+          <ProjectImage name={project.name} image={project.image} />
+          <a class="case-link" href={`/projects/${project.id}/`}>Read case study <span aria-hidden="true">↗</span><span class="sr-only">: {project.name}</span></a>
           <ul class="project-technologies" aria-label={`${project.name} technologies`}>
             {project.technologies.map((technology) => <li>{technology}</li>)}
           </ul>
@@ -61,4 +68,5 @@ const hasPhoto = existsSync(resolve('public', `.${profile.image}`));
       ))}
     </ul>
   </section>
+  <PageEnd back={{ href: '/', label: '← Home' }} links={[{ href: latest ? postUrl(latest.id) : '/blog/', label: 'From the notebook', title: latest?.data.title ?? 'Explore the notes' }]} />
 </Layout>

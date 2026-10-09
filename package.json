@@ -10,10 +10,14 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "test": "node --test tests/*.test.mjs",
+    "security:check": "node scripts/check-public.mjs"
   },
   "dependencies": {
-    "astro": "7.3.5"
+    "@astrojs/markdown-remark": "^7.3.2",
+    "astro": "7.3.5",
+    "rehype-sanitize": "^6.0.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",

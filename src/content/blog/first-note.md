@@ -2,13 +2,14 @@
 title: A first entry
 date: 2026-10-04
 tag: journal
+description: A sample entry about observations, unfinished ideas, and the things worth keeping.
 ---
 
 A place to collect a few observations, unfinished ideas, and things worth returning to. Some entries may be brief; others may need a little more room.
 
 This is a **sample note**, with an image and a few examples of Markdown formatting. Its contents can be replaced at any time.
 
-![A gathering in a living room, with a television in the background.](/img/testimage.png)
+![A gathering in a living room, with a television in the background.](/img/testimage.png "A photograph from the sample notebook.")
 
 ## A small observation
 

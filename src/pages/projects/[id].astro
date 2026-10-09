@@ -1,0 +1,43 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Signature from '../../components/Signature.astro';
+import ProjectImage from '../../components/ProjectImage.astro';
+import PageEnd from '../../components/PageEnd.astro';
+import { projects } from '../../config';
+import { caseStudies } from '../../data/case-studies';
+export function getStaticPaths() {
+  return projects.map((project) => ({ params: { id: project.id }, props: { project } }));
+}
+interface Props { project: typeof projects[number] }
+const { project } = Astro.props;
+const study = caseStudies[project.id as keyof typeof caseStudies];
+const next = projects[(projects.findIndex((entry) => entry.id === project.id) + 1) % projects.length];
+const onward = next && next.id !== project.id
+  ? [{ href: `/projects/${next.id}/`, label: 'Next project', title: next.name }]
+  : [{ href: '/blog/', label: 'From the notebook', title: 'Explore the notes' }];
+if (project.url) onward.push({ href: project.url, label: 'On the web', title: 'View project' });
+---
+<Layout page="profile" title={project.name} description={project.summary}>
+  <article class="case-study">
+    <header class="case-header">
+      <a class="back-link" href="/profile/#work">← Selected work</a>
+      <p class="case-index"><span>{study.label}</span><Signature /></p>
+      <h1>{project.name}</h1>
+      <p class="case-summary">{project.summary}</p>
+      <dl class="case-facts"><div><dt>Context</dt><dd>{study.context}</dd></div><div><dt>My role</dt><dd>{study.role}</dd></div></dl>
+      <ul class="project-technologies" aria-label="Technologies">{project.technologies.map((item) => <li>{item}</li>)}</ul>
+    </header>
+    <ProjectImage name={project.name} image={project.image} />
+    <section aria-labelledby="overview"><h2 id="overview">The project</h2><p>{study.introduction}</p><p>{study.problem}</p></section>
+    <figure class="architecture" aria-labelledby="architecture-caption">
+      <figcaption id="architecture-caption">System outline</figcaption>
+      <ol>{study.steps.map((step, index) => <li><span class="diagram-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><strong>{step.title}</strong><span>{step.detail}</span></li>)}</ol>
+      <p class="diagram-note">Conceptual map of the documented components.</p>
+    </figure>
+    <section aria-labelledby="decisions"><h2 id="decisions">Technical decisions</h2><div class="decision-list">{study.decisions.map((decision, index) => <section><h3><span aria-hidden="true">{String(index + 1).padStart(2, '0')} / </span>{decision.title}</h3><p>{decision.body}</p></section>)}</div></section>
+    <section aria-labelledby="challenge"><h2 id="challenge">The challenge</h2><p>{study.challenge}</p></section>
+    <section aria-labelledby="outcome"><h2 id="outcome">Outcome &amp; scope</h2><p>{study.outcome}</p><ul class="evidence-list">{study.evidence.map((item) => <li>{item}</li>)}</ul><p class="case-limit">{study.limits}</p></section>
+
+  </article>
+  <PageEnd back={{ href: '/profile/#work', label: '← Selected work' }} links={onward} />
+</Layout>
